@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Безопасность в Интернете — тренажёр для 2 класса</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', 'Trebuchet MS', Verdana, sans-serif;
+    background: linear-gradient(160deg, #e0f2fe 0%, #ecfdf5 50%, #fef9c3 100%);
+    min-height: 100vh;
+    color: #1f2937;
+  }
+
+  .app {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 18px 48px;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn .35s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: #ffffff;
+    border: 4px solid #bae6fd;
+    border-radius: 28px;
+    padding: 28px 32px 32px;
+    box-shadow: 0 14px 34px rgba(30, 64, 175, .12);
+  }
+
+  /* ---------- ЭКРАН ВВОДА ИМЕНИ ---------- */
+
+  .start-card { text-align: center; }
+
+  .hero { font-size: 64px; line-height: 1; margin-bottom: 8px; }
+
+  h1 {
+    font-size: 34px;
+    margin: 0 0 8px;
+    color: #0369a1;
+    letter-spacing: .5px;
+  }
+
+  .sub {
+    font-size: 19px;
+    color: #0284c7;
+    margin: 0 0 26px;
+    font-weight: 600;
+  }
+
+  .name-label {
+    display: block;
+    font-size: 24px;
+    font-weight: 800;
+    color: #166534;
+    margin-bottom: 12px;
+  }
+
+  #nameInput {
+    width: 100%;
+    max-width: 520px;
+    display: block;
+    margin: 0 auto 26px;
+    padding: 18px 22px;
+    font-size: 26px;
+    font-family: inherit;
+    font-weight: 700;
+    color: #14532d;
+    text-align: center;
+    background: #f0fdf4;
+    border: 4px solid #22c55e;
+    border-radius: 20px;
+    outline: none;
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, .22), 0 0 22px rgba(34, 197, 94, .55);
+    transition: box-shadow .2s, border-color .2s;
+  }
+
+  #nameInput:focus {
+    border-color: #16a34a;
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, .30), 0 0 30px rgba(34, 197, 94, .75);
+  }
+
+  .hint {
+    font-size: 17px;
+    color: #64748b;
+    margin: 18px 0 0;
+  }
+
+  /* ---------- КНОПКИ ---------- */
+
+  .btn {
+    border: none;
+    border-radius: 20px;
+    padding: 18px 40px;
+    font-size: 24px;
+    font-weight: 800;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform .12s, box-shadow .12s, background .2s;
+  }
+
+  .btn-main {
+    background: linear-gradient(180deg, #22c55e, #16a34a);
+    color: #ffffff;
+    box-shadow: 0 6px 0 #15803d;
+  }
+
+  .btn-main:not(:disabled):hover { background: linear-gradient(180deg, #34d399, #16a34a); }
+  .btn-main:not(:disabled):active { transform: translateY(4px); box-shadow: 0 2px 0 #15803d; }
+
+  .btn-main:disabled {
+    background: #d1d5db;
+    color: #f8fafc;
+    box-shadow: 0 6px 0 #9ca3af;
+    cursor: not-allowed;
+  }
+
+  /* ---------- ЭКРАН ВОПРОСОВ ---------- */
+
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .stage-label {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0369a1;
+    background: #e0f2fe;
+    border-radius: 14px;
+    padding: 8px 16px;
+  }
+
+  .stage-label.stage-2 {
+    color: #9a3412;
+    background: #ffedd5;
+  }
+
+  .counter {
+    font-size: 18px;
+    font-weight: 700;
+    color: #475569;
+  }
+
+  .progress {
+    width: 100%;
+    height: 16px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #38bdf8, #22c55e);
+    transition: width .35s ease;
+  }
+
+  .question-text {
+    font-size: 26px;
+    line-height: 1.35;
+    margin: 0 0 22px;
+    color: #0f172a;
+  }
+
+  .answers { margin-bottom: 24px; }
+
+  .answer {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: 21px;
+    font-weight: 600;
+    color: #1f2937;
+    background: #f8fafc;
+    border: 3px solid #cbd5e1;
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+
+  .answer:hover { border-color: #38bdf8; background: #f0f9ff; }
+
+  .answer.selected {
+    border-color: #22c55e;
+    background: #dcfce7;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, .22);
+  }
+
+  .letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 50%;
+    background: #38bdf8;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 20px;
+  }
+
+  .answer.selected .letter { background: #22c55e; }
+
+  /* ---------- СОЕДИНЕНИЕ ПАР ---------- */
+
+  .match-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .match-head {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0369a1;
+    margin-bottom: 10px;
+  }
+
+  .match-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    background: #f8fafc;
+    border: 3px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+
+  .match-item:hover { border-color: #38bdf8; background: #f0f9ff; }
+
+  .match-item.selected {
+    border-color: #f59e0b;
+    background: #fef3c7;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, .22);
+  }
+
+  .match-item.matched {
+    border-color: #22c55e;
+    background: #dcfce7;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 50%;
+    background: #94a3b8;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 18px;
+  }
+
+  .match-item.selected .badge { background: #f59e0b; }
+  .match-item.matched .badge { background: #22c55e; }
+
+  .quiz-bottom { text-align: right; }
+
+  /* ---------- ЭКРАН ПЕРЕХОДА ---------- */
+
+  .transition-card { text-align: center; padding: 50px 32px; }
+
+  .big-emoji { font-size: 78px; line-height: 1; margin-bottom: 12px; }
+
+  .transition-card h2 {
+    font-size: 32px;
+    color: #15803d;
+    margin: 0 0 12px;
+  }
+
+  .transition-card p {
+    font-size: 21px;
+    color: #475569;
+    margin: 0 0 22px;
+  }
+
+  .dots { display: inline-flex; gap: 10px; }
+
+  .dots span {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: bounce 1s infinite ease-in-out;
+  }
+
+  .dots span:nth-child(2) { animation-delay: .15s; }
+  .dots span:nth-child(3) { animation-delay: .3s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: .5; }
+    40% { transform: translateY(-12px); opacity: 1; }
+  }
+
+  /* ---------- ЭКРАН РЕЗУЛЬТАТА ---------- */
+
+  .result-title {
+    font-size: 30px;
+    text-align: center;
+    color: #0369a1;
+    margin: 0 0 22px;
+  }
+
+  .name-plate {
+    font-size: 30px;
+    font-weight: 900;
+    text-align: center;
+    color: #713f12;
+    background: #fef08a;
+    border: 4px solid #facc15;
+    border-radius: 20px;
+    padding: 14px 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 18px rgba(250, 204, 21, .35);
+    word-break: break-word;
+  }
+
+  .score-plate {
+    font-size: 46px;
+    font-weight: 900;
+    text-align: center;
+    color: #ffffff;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-radius: 24px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 26px rgba(22, 163, 74, .32);
+  }
+
+  .score-plate.lvl-1 { background: linear-gradient(135deg, #f87171, #dc2626); box-shadow: 0 10px 26px rgba(220, 38, 38, .32); }
+  .score-plate.lvl-2 { background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 10px 26px rgba(245, 158, 11, .32); }
+  .score-plate.lvl-3 { background: linear-gradient(135deg, #34d399, #16a34a); box-shadow: 0 10px 26px rgba(22, 163, 74, .32); }
+  .score-plate.lvl-4 { background: linear-gradient(135deg, #38bdf8, #4f46e5); box-shadow: 0 10px 26px rgba(79, 70, 229, .32); }
+
+  .stage-scores {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .stage-score {
+    flex: 1 1 220px;
+    font-size: 19px;
+    color: #334155;
+    background: #f1f5f9;
+    border: 3px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 14px 18px;
+    text-align: center;
+  }
+
+  .stage-score b { color: #0369a1; font-size: 21px; }
+
+  .warn {
+    border: 5px dashed #ef4444;
+    background: #fff7ed;
+    color: #b91c1c;
+    font-size: 24px;
+    font-weight: 900;
+    text-align: center;
+    border-radius: 20px;
+    padding: 20px 22px;
+    margin-bottom: 26px;
+    line-height: 1.3;
+  }
+
+  .desc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 18px;
+    margin-bottom: 26px;
+  }
+
+  .desc-table th,
+  .desc-table td {
+    border: 2px solid #cbd5e1;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .desc-table th {
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 18px;
+  }
+
+  .desc-table tr.hl td {
+    background: #dcfce7;
+    font-weight: 800;
+    color: #14532d;
+  }
+
+  .print-row { text-align: center; }
+
+  .btn-print {
+    background: linear-gradient(180deg, #38bdf8, #0284c7);
+    color: #ffffff;
+    box-shadow: 0 6px 0 #075985;
+    font-size: 22px;
+  }
+
+  .btn-print:hover { background: linear-gradient(180deg, #7dd3fc, #0284c7); }
+  .btn-print:active { transform: translateY(4px); box-shadow: 0 2px 0 #075985; }
+
+  /* ---------- ОТЧЁТ ДЛЯ ПЕЧАТИ ---------- */
+
+  #print-area { display: none; }
+
+  #print-area h1 {
+    font-size: 22px;
+    text-align: center;
+    margin: 0 0 6px;
+    color: #000;
+    letter-spacing: 0;
+  }
+
+  #print-area .p-sub {
+    text-align: center;
+    font-size: 13px;
+    color: #333;
+    margin: 0 0 24px;
+  }
+
+  #print-area .p-row {
+    font-size: 16px;
+    margin: 0 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #999;
+  }
+
+  #print-area .p-row b { font-size: 18px; }
+
+  #print-area .p-sign {
+    margin-top: 48px;
+    font-size: 15px;
+    line-height: 2.2;
+  }
+
+  #print-area .p-note {
+    margin-top: 26px;
+    font-size: 13px;
+    border: 2px solid #000;
+    padding: 10px 12px;
+  }
+
+  /* ---------- АДАПТИВНОСТЬ ---------- */
+
+  @media (max-width: 640px) {
+    .card { padding: 20px 16px 24px; border-radius: 22px; }
+    h1 { font-size: 26px; }
+    .hero { font-size: 50px; }
+    .question-text { font-size: 22px; }
+    .answer { font-size: 18px; padding: 13px 14px; }
+    .match-wrap { grid-template-columns: 1fr; gap: 8px; }
+    .match-item { font-size: 16px; }
+    .score-plate { font-size: 34px; }
+    .name-plate { font-size: 26px; }
+    .warn { font-size: 19px; }
+    .desc-table { font-size: 15px; }
+    .btn { font-size: 20px; padding: 15px 26px; width: 100%; }
+    .quiz-bottom { text-align: center; }
+  }
+
+  /* ---------- ПЕЧАТЬ ---------- */
+
+  @page { size: A4; margin: 18mm; }
+
+  @media print {
+    body {
+      background: #ffffff !important;
+      color: #000000 !important;
+      font-family: 'Times New Roman', 'Georgia', serif;
+    }
+
+    .app,
+    .screen,
+    .no-print {
+      display: none !important;
+    }
+
+    #print-area {
+      display: block !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ЭКРАН 1: ВВОД ИМЕНИ -->
+  <section id="screen-start" class="screen active">
+    <div class="card start-card">
+      <div class="hero">🌐🛡️</div>
+      <h1>Безопасность в Интернете</h1>
+      <p class="sub">Тренажёр для 2 класса · Урок 3 · 1 четверть</p>
+
+      <label class="name-label" for="nameInput">Напиши своё имя:</label>
+      <input id="nameInput" type="text" placeholder="" autocomplete="off" spellcheck="false" autocapitalize="words">
+      <button id="startBtn" class="btn btn-main" disabled>Начать тест</button>
+      <p class="hint">Сначала впиши имя — тогда кнопка станет активной.</p>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 2: ВОПРОСЫ -->
+  <section id="screen-quiz" class="screen">
+    <div class="card">
+      <div class="quiz-top">
+        <span id="stageLabel" class="stage-label">Этап 1 · Базовый уровень</span>
+        <span id="counter" class="counter">Вопрос 1 из 9</span>
+      </div>
+      <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+
+      <h2 id="questionText" class="question-text"></h2>
+      <div id="answersBox" class="answers"></div>
+
+      <div class="quiz-bottom">
+        <button id="nextBtn" class="btn btn-main" disabled>Дальше</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 3: ПЕРЕХОД НА 2 ЭТАП -->
+  <section id="screen-transition" class="screen">
+    <div class="card transition-card">
+      <div class="big-emoji">🎉</div>
+      <h2>Этап 1 пройден!</h2>
+      <p>Молодец! Переходим на второй этап…</p>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 4: РЕЗУЛЬТАТ -->
+  <section id="screen-result" class="screen">
+    <div class="card">
+      <h2 class="result-title">Результат теста</h2>
+
+      <div class="name-plate">Ученик: <span id="resName"></span></div>
+      <div id="resScorePlate" class="score-plate"><span id="resScore"></span></div>
+
+      <div class="stage-scores">
+        <div class="stage-score">Этап 1 (базовый): <b id="resS1"></b></div>
+        <div class="stage-score">Этап 2 (продвинутый): <b id="resS2"></b></div>
+      </div>
+
+      <div class="warn">⚠️ Не закрывай результат пока учитель не проверит!</div>
+
+      <table class="desc-table">
+        <thead>
+          <tr>
+            <th>Баллы</th>
+            <th>Уровень</th>
+            <th>Что это значит</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="lvl-1">
+            <td>1–3 балла</td>
+            <td>Низкий уровень</td>
+            <td>Нужно повторить правила</td>
+          </tr>
+          <tr id="lvl-2">
+            <td>4–6 баллов</td>
+            <td>Средний уровень</td>
+            <td>Знает базовые правила, есть ошибки</td>
+          </tr>
+          <tr id="lvl-3">
+            <td>7–8 баллов</td>
+            <td>Хороший уровень</td>
+            <td>Отлично усвоил правила безопасности</td>
+          </tr>
+          <tr id="lvl-4">
+            <td>9–10 баллов</td>
+            <td>Высокий уровень</td>
+            <td>Уверенно применяет правила в сложных ситуациях</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="print-row">
+        <button class="btn btn-print" onclick="window.print()">🖨️ Распечатать результат (PDF)</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ОТЧЁТ ДЛЯ ПЕЧАТИ -->
+<div id="print-area">
+  <h1>Результат проверки знаний</h1>
+  <p class="p-sub">Тема: «Безопасность в Интернете» · 2 класс · Урок 3 · 1 четверть</p>
+
+  <div class="p-row">Ученик: <b id="p-name"></b></div>
+  <div class="p-row">Итоговый балл: <b id="p-score"></b></div>
+  <div class="p-row">Этап 1 (базовый уровень): <b id="p-s1"></b></div>
+  <div class="p-row">Этап 2 (продвинутый уровень): <b id="p-s2"></b></div>
+  <div class="p-row">Уровень: <b id="p-level"></b></div>
+
+  <div class="p-note">Не закрывай результат пока учитель не проверит!</div>
+
+  <div class="p-sign">
+    <p>Оценка учителя: ______________________________</p>
+    <p>Подпись учителя: ______________________________</p>
+    <p>Дата: «____» ______________________ 20____ г.</p>
+  </div>
+</div>
+
+<script>
+  /* ================== ВОПРОСЫ ================== */
+
+  const questions = [
+    /* ---------- ЭТАП 1: БАЗОВЫЙ УРОВЕНЬ (максимум 8 баллов) ---------- */
+    {
+      stage: 1,
+      type: 'tf',
+      text: 'Браузер — это программа, с помощью которой мы заходим в Интернет и открываем сайты.',
+      options: ['Верно', 'Неверно'],
+      correct: 0,
+      points: 1
+    },
+    {
+      stage: 1,
+      type: 'tf',
+      text: 'Свой пароль от странички можно рассказать другу в классе.',
+      options: ['Верно', 'Неверно'],
+      correct: 1,
+      points: 1
+    },
+    {
+      stage: 1,
+      type: 'tf',
+      text: 'Если в Интернете тебя что-то напугало или обидело, нужно сразу рассказать взрослым.',
+      options: ['Верно', 'Неверно'],
+      correct: 0,
+      points: 1
+    },
+    {
+      stage: 1,
+      type: 'choice',
+      text: 'Что нужно написать в специальной строке браузера, чтобы открыть сайт?',
+      options: [
+        'Своё имя и фамилию',
+        'Адрес сайта, например www.school.ru',
+        'Свой номер телефона'
+      ],
+      correct: 1,
+      points: 1
+    },
+    {
+      stage: 1,
+      type: 'choice',
+      text: 'Какая информация в Интернете бывает в виде ЗВУКА?',
+      options: [
+        'Фотография котёнка',
+        'Песенка из мультфильма',
+        'Рассказ про животных'
+      ],
+      correct: 1,
+      points: 1
+    },
+    {
+      stage: 1,
+      type: 'choice',
+      text: 'Незнакомец в Интернете спрашивает, где ты живёшь. Что ты сделаешь?',
+      options: [
+        'Не скажу адрес и расскажу об этом взрослым',
+        'Сразу напишу свой домашний адрес',
+        'Отправлю ему фото своего дома'
+      ],
+      correct: 0,
+      points: 1
+    },
+    {
+      stage: 1,
+      type: 'match',
+      text: 'Соедини вид информации с примером.',
+      pairs: [
+        { left: 'Текст', right: 'Сказка, которую читают на сайте' },
+        { left: 'Звук', right: 'Песенка из мультфильма' },
+        { left: 'Картинка', right: 'Фотография котёнка' },
+        { left: 'Видео', right: 'Мультфильм на экране' }
+      ],
+      points: 2
+    },
+
+    /* ---------- ЭТАП 2: ПРОДВИНУТЫЙ УРОВЕНЬ (+2 балла) ---------- */
+    {
+      stage: 2,
+      type: 'choice',
+      text: 'На экране появилось яркое окно: «Ты выиграл приз! Нажми сюда!» Что ты сделаешь?',
+      options: [
+        'Нажму на кнопку — очень хочется приз',
+        'Закрою окно и расскажу взрослым',
+        'Напишу свой адрес, чтобы приз прислали'
+      ],
+      correct: 1,
+      points: 1
+    },
+    {
+      stage: 2,
+      type: 'choice',
+      text: 'Незнакомец в Интернете пишет: «Пришли мне своё фото, я твой друг». Что делать?',
+      options: [
+        'Отправить фото — он же друг',
+        'Не отправлять фото и рассказать взрослым',
+        'Отправить фото и адрес, чтобы он приехал в гости'
+      ],
+      correct: 1,
+      points: 1
+    }
+  ];
+
+  const LEVEL_NAMES = [
+    'Низкий уровень (Нужно повторить правила)',
+    'Средний уровень (Знает базовые правила, есть ошибки)',
+    'Хороший уровень (Отлично усвоил правила безопасности)',
+    'Высокий уровень (Уверенно применяет правила в сложных ситуациях)'
+  ];
+
+  /* ================== СОСТОЯНИЕ ================== */
+
+  const state = {
+    name: '',
+    index: 0,
+    score1: 0,
+    score2: 0
+  };
+
+  let selectedOption = null;
+  let matchPairs = {};
+  let matchSelectedLeft = null;
+  let matchOrder = [];
+
+  /* ================== ЭЛЕМЕНТЫ ================== */
+
+  const nameInput = document.getElementById('nameInput');
+  const startBtn = document.getElementById('startBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const stageLabel = document.getElementById('stageLabel');
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const questionText = document.getElementById('questionText');
+  const answersBox = document.getElementById('answersBox');
+
+  const screenStart = document.getElementById('screen-start');
+  const screenQuiz = document.getElementById('screen-quiz');
+  const screenTransition = document.getElementById('screen-transition');
+  const screenResult = document.getElementById('screen-result');
+
+  /* ================== ВСПОМОГАТЕЛЬНЫЕ ================== */
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = a[i];
+      a[i] = a[j];
+      a[j] = tmp;
+    }
+    return a;
+  }
+
+  function showScreen(screen) {
+    [screenStart, screenQuiz, screenTransition, screenResult].forEach(function (s) {
+      s.classList.remove('active');
+    });
+    screen.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  /* ================== ЭКРАН ВВОДА ИМЕНИ ================== */
+
+  nameInput.addEventListener('input', function () {
+    const hasLetter = /[A-Za-zА-Яа-яЁё]/.test(nameInput.value);
+    startBtn.disabled = !hasLetter;
+  });
+
+  nameInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !startBtn.disabled) {
+      startBtn.click();
+    }
+  });
+
+  startBtn.addEventListener('click', function () {
+    const value = nameInput.value.trim();
+    if (!/[A-Za-zА-Яа-яЁё]/.test(value)) {
+      return;
+    }
+    state.name = value;
+    state.index = 0;
+    state.score1 = 0;
+    state.score2 = 0;
+    showScreen(screenQuiz);
+    renderQuestion();
+  });
+
+  /* ================== ОТРИСОВКА ВОПРОСА ================== */
+
+  function renderQuestion() {
+    const q = questions[state.index];
+
+    selectedOption = null;
+    matchPairs = {};
+    matchSelectedLeft = null;
+    matchOrder = [];
+
+    stageLabel.textContent = q.stage === 1 ? 'Этап 1 · Базовый уровень' : 'Этап 2 · Продвинутый уровень';
+    if (q.stage === 2) {
+      stageLabel.classList.add('stage-2');
+    } else {
+      stageLabel.classList.remove('stage-2');
+    }
+
+    counter.textContent = 'Вопрос ' + (state.index + 1) + ' из ' + questions.length;
+    progressFill.style.width = (state.index / questions.length * 100) + '%';
+    questionText.textContent = q.text;
+
+    answersBox.innerHTML = '';
+
+    if (q.type === 'match') {
+      matchOrder = shuffle(q.pairs.map(function (_, i) { return i; }));
+      const container = document.createElement('div');
+      answersBox.appendChild(container);
+      drawMatch(q, container);
+    } else {
+      const letters = ['А', 'Б', 'В'];
+      q.options.forEach(function (opt, i) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'answer';
+        btn.innerHTML = '<span class="letter">' + letters[i] + '</span><span>' + opt + '</span>';
+        btn.addEventListener('click', function () {
+          selectedOption = i;
+          const all = answersBox.querySelectorAll('.answer');
+          for (let k = 0; k < all.length; k++) {
+            all[k].classList.remove('selected');
+          }
+          btn.classList.add('selected');
+          updateNextBtn();
+        });
+        answersBox.appendChild(btn);
+      });
+    }
+
+    nextBtn.textContent = (state.index === questions.length - 1) ? 'Завершить тест' : 'Дальше';
+    updateNextBtn();
+  }
+
+  function drawMatch(q, container) {
+    const letters = ['А', 'Б', 'В', 'Г'];
+    container.innerHTML = '';
+
+    const grid = document.createElement('div');
+    grid.className = 'match-wrap';
+
+    const leftCol = document.createElement('div');
+    leftCol.className = 'match-col';
+    const leftHead = document.createElement('div');
+    leftHead.className = 'match-head';
+    leftHead.textContent = 'Вид информации';
+    leftCol.appendChild(leftHead);
+
+    q.pairs.forEach(function (pair, i) {
+      const el = document.createElement('button');
+      el.type = 'button';
+      let cls = 'match-item';
+      if (matchSelectedLeft === i) {
+        cls += ' selected';
+      }
+      if (matchPairs[i] !== undefined) {
+        cls += ' matched';
+      }
+      el.className = cls;
+      el.innerHTML = '<span class="badge">' + letters[i] + '</span><span>' + pair.left + '</span>';
+      el.addEventListener('click', function () {
+        matchSelectedLeft = (matchSelectedLeft === i) ? null : i;
+        drawMatch(q, container);
+        updateNextBtn();
+      });
+      leftCol.appendChild(el);
+    });
+
+    const rightCol = document.createElement('div');
+    rightCol.className = 'match-col';
+    const rightHead = document.createElement('div');
+    rightHead.className = 'match-head';
+    rightHead.textContent = 'Пример';
+    rightCol.appendChild(rightHead);
+
+    matchOrder.forEach(function (ri) {
+      let owner = null;
+      for (const key in matchPairs) {
+        if (matchPairs[key] === ri) {
+          owner = key;
+          break;
+        }
+      }
+
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'match-item' + (owner !== null ? ' matched' : '');
+      el.innerHTML = '<span class="badge">' +
+        (owner !== null ? letters[Number(owner)] : '?') +
+        '</span><span>' + q.pairs[ri].right + '</span>';
+
+      el.addEventListener('click', function () {
+        if (matchSelectedLeft === null) {
+          return;
+        }
+        for (const key in matchPairs) {
+          if (matchPairs[key] === ri) {
+            delete matchPairs[key];
+          }
+        }
+        matchPairs[matchSelectedLeft] = ri;
+        matchSelectedLeft = null;
+        drawMatch(q, container);
+        updateNextBtn();
+      });
+
+      rightCol.appendChild(el);
+    });
+
+    grid.appendChild(leftCol);
+    grid.appendChild(rightCol);
+    container.appendChild(grid);
+  }
+
+  function updateNextBtn() {
+    const q = questions[state.index];
+    if (!q) {
+      return;
+    }
+    if (q.type === 'match') {
+      nextBtn.disabled = (Object.keys(matchPairs).length !== q.pairs.length);
+    } else {
+      nextBtn.disabled = (selectedOption === null);
+    }
+  }
+
+  /* ================== ПЕРЕХОД ДАЛЬШЕ ================== */
+
+  nextBtn.addEventListener('click', goNext);
+
+  function goNext() {
+    const q = questions[state.index];
+    let earned = 0;
+
+    if (q.type === 'match') {
+      let correctCount = 0;
+      q.pairs.forEach(function (_, i) {
+        if (matchPairs[i] === i) {
+          correctCount++;
+        }
+      });
+      if (correctCount === q.pairs.length) {
+        earned = 2;
+      } else if (correctCount >= 2) {
+        earned = 1;
+      } else {
+        earned = 0;
+      }
+    } else {
+      if (selectedOption === q.correct) {
+        earned = q.points;
+      }
+    }
+
+    if (q.stage === 1) {
+      state.score1 += earned;
+    } else {
+      state.score2 += earned;
+    }
+
+    const nextIndex = state.index + 1;
+    const lastOfStage1 = (q.stage === 1) &&
+      (nextIndex < questions.length) &&
+      (questions[nextIndex].stage === 2);
+
+    state.index = nextIndex;
+
+    if (state.index >= questions.length) {
+      showResult();
+      return;
+    }
+
+    if (lastOfStage1) {
+      showTransition();
+      return;
+    }
+
+    renderQuestion();
+    window.scrollTo(0, 0);
+  }
+
+  function showTransition() {
+    showScreen(screenTransition);
+    setTimeout(function () {
+      showScreen(screenQuiz);
+      renderQuestion();
+    }, 1800);
+  }
+
+  /* ================== РЕЗУЛЬТАТ ================== */
+
+  function showResult() {
+    const total = state.score1 + state.score2;
+
+    let level;
+    if (total >= 9) {
+      level = 4;
+    } else if (total >= 7) {
+      level = 3;
+    } else if (total >= 4) {
+      level = 2;
+    } else {
+      level = 1;
+    }
+
+    document.getElementById('resName').textContent = state.name;
+    document.getElementById('resScore').textContent = total + ' из 10 баллов';
+    document.getElementById('resS1').textContent = state.score1 + ' из 8';
+    document.getElementById('resS2').textContent = state.score2 + ' из 2';
+
+    const plate = document.getElementById('resScorePlate');
+    plate.className = 'score-plate lvl-' + level;
+
+    const rows = document.querySelectorAll('.desc-table tbody tr');
+    for (let i = 0; i < rows.length; i++) {
+      rows[i].classList.remove('hl');
+    }
+    document.getElementById('lvl-' + level).classList.add('hl');
+
+    document.getElementById('p-name').textContent = state.name;
+    document.getElementById('p-score').textContent = total + ' из 10';
+    document.getElementById('p-s1').textContent = state.score1 + ' из 8';
+    document.getElementById('p-s2').textContent = state.score2 + ' из 2';
+    document.getElementById('p-level').textContent = LEVEL_NAMES[level - 1];
+
+    showScreen(screenResult);
+  }
+</script>
+</body>
+</html>
